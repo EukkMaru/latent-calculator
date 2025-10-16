@@ -5,48 +5,120 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Latent Kingdom Calculator</title>
 <style>
-  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; max-width: 720px }
-  h1 { font-size: 1.25rem; margin: 0 0 12px }
-  .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 12px 0 }
-  label { display: block; font-weight: 600; margin-top: 8px }
-  input, select, button { padding: 8px; font-size: 1rem; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
-  .muted { color: #555 }
-  .error { color: #b00020; font-weight: 600; }
-  .out pre { background: #fafafa; border: 1px solid #eee; padding: 12px; border-radius: 8px; white-space: pre-wrap }
+  :root {
+    --bg: #0f1220; --fg: #e9eef6; --muted:#aab3c2; --card:#171a2b; --border:#2a3050; --accent:#8dd6ff;
+    --grad1:#6e8efb; --grad2:#a777e3;
+  }
+  [data-theme="ocean"] {
+    --bg:#081b29; --fg:#e7f6ff; --muted:#9ec9de; --card:#0f2a3b; --border:#14465e; --accent:#7fd4ff;
+    --grad1:#00c6ff; --grad2:#0072ff;
+  }
+  [data-theme="sunrise"] {
+    --bg:#1c1513; --fg:#fff3e8; --muted:#ffd3b0; --card:#2a1d19; --border:#3a2a24; --accent:#ffcf6f;
+    --grad1:#ff9966; --grad2:#ff5e62;
+  }
+  [data-theme="matcha"] {
+    --bg:#0f1a14; --fg:#e9fff1; --muted:#b6e3c8; --card:#13221a; --border:#1f3a2d; --accent:#a8f5c9;
+    --grad1:#56ab2f; --grad2:#a8e063;
+  }
+
+  html,body { height:100% }
+  body {
+    margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color:var(--fg); background:linear-gradient(135deg,var(--grad1),var(--grad2)) fixed;
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .shell {
+    backdrop-filter: blur(8px);
+    background: color-mix(in oklab, var(--card) 85%, transparent);
+    border:1px solid var(--border); border-radius:18px; max-width:760px; width:100%;
+    box-shadow: 0 10px 30px color-mix(in oklab, black 60%, transparent);
+  }
+  .bar { display:flex; gap:12px; padding:16px 18px; border-bottom:1px solid var(--border); align-items:center; flex-wrap:wrap }
+  .title { font-weight:700; font-size:18px; letter-spacing:.2px }
+  .spacer { flex:1 }
+  select, input, button {
+    background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:14px;
+  }
+  button { background:var(--accent); color:#001018; border:none; font-weight:700; cursor:pointer }
+  button:active { transform: translateY(1px) }
+
+  .grid { display:grid; gap:14px; grid-template-columns: 1fr; padding:16px }
+  .row { display:grid; gap:12px; grid-template-columns: 1fr 1fr }
+  .muted { color:var(--muted); font-size:13px }
+  .error { color:#ffb4c1; font-weight:700; }
+
+  .cards { display:grid; gap:14px; grid-template-columns: 1fr 1fr }
+  .card {
+    background: color-mix(in oklab, var(--bg) 75%, transparent);
+    border:1px solid var(--border); border-radius:14px; padding:16px; min-height:110px;
+  }
+  .k { font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted) }
+  .v { font-size:34px; font-weight:800; line-height:1.1; word-break:break-word }
+  .sub { font-size:13px; color:var(--muted); margin-top:6px }
+
+  @media (max-width:720px){
+    .cards { grid-template-columns: 1fr }
+    .row { grid-template-columns: 1fr }
+  }
 </style>
 </head>
-<body>
-  <h1>Latent Kingdom Calculator</h1>
-
-  <div class="card">
-    <div class="row">
-      <div>
-        <label for="difficulty">Difficulty</label>
-        <select id="difficulty">
-          <option value="MASTER">MASTER (14.9)</option>
-          <option value="EXPERT">EXPERT (12.8)</option>
-        </select>
-      </div>
-      <div>
-        <label>&nbsp;</label>
-        <button id="calc">Calculate</button>
-      </div>
+<body data-theme="ocean">
+  <div class="shell">
+    <div class="bar">
+      <div class="title">Latent Kingdom Calculator</div>
+      <div class="spacer"></div>
+      <select id="theme">
+        <option value="ocean">Ocean</option>
+        <option value="sunrise">Sunrise</option>
+        <option value="matcha">Matcha</option>
+      </select>
     </div>
 
-    <label for="percent">Accuracy % (0–101). Leave blank if using desired rating.</label>
-    <input id="percent" type="number" step="0.0001" min="0" max="101" placeholder="e.g., 98.7654" />
+    <div class="grid">
+      <div class="row">
+        <label>
+          <span class="k">Difficulty</span><br/>
+          <select id="difficulty">
+            <option value="MASTER">MASTER (14.9)</option>
+            <option value="EXPERT">EXPERT (12.8)</option>
+          </select>
+        </label>
+        <div></div>
+      </div>
 
-    <label for="desired">Desired rating. Leave blank if using accuracy %.</label>
-    <input id="desired" type="number" step="0.01" min="0" placeholder="e.g., 300.00" />
+      <label>
+        <span class="k">Accuracy % (0–101)</span>
+        <input id="percent" type="number" step="0.0001" min="0" max="101" placeholder="e.g., 98.7654" />
+      </label>
 
-    <p class="muted">Use exactly one input: either Accuracy % or Desired rating.</p>
-    <p id="err" class="error" role="alert" style="display:none"></p>
-  </div>
+      <label>
+        <span class="k">Desired rating</span>
+        <input id="desired" type="number" step="0.01" min="0" placeholder="e.g., 300.00" />
+      </label>
 
-  <div class="card out">
-    <strong>Result</strong>
-    <pre id="out" aria-live="polite">—</pre>
+      <div class="row">
+        <div class="muted">Enter exactly one value. If accuracy is set you will get only the rating. If desired rating is set you will get only required accuracy and rank.</div>
+        <div style="text-align:right"><button id="calc">Calculate</button></div>
+      </div>
+
+      <div id="err" class="error" style="display:none"></div>
+
+      <div class="cards">
+        <div class="card" id="primaryCard">
+          <div class="k" id="primaryK">Result</div>
+          <div class="v" id="primaryV">—</div>
+          <div class="sub" id="primarySub"></div>
+        </div>
+        <div class="card" id="secondaryCard" style="display:none">
+          <div class="k" id="secondaryK"></div>
+          <div class="v" id="secondaryV"></div>
+          <div class="sub" id="secondarySub"></div>
+        </div>
+      </div>
+
+      <div class="muted" id="maxLine"></div>
+    </div>
   </div>
 
 <script>
@@ -63,16 +135,14 @@ const RANKS = [
   ["AA",   90.0, 15.2],
   ["A",    80.0, 13.6],
 ];
-const MAX_INPUT = 101.0;       // UI cap
-const MAX_ACHIEVABLE = 100.5;  // rating cap
+const MAX_INPUT = 101.0;
+const MAX_ACHIEVABLE = 100.5;
 const PRECISION = 1e-5;
 const BELOW_A_CONST = 0.0;
 
-/* ---- Core math ---- */
+/* ---- Math ---- */
 function findRankByPercent(p) {
-  for (const [rank, thr, c] of RANKS) {
-    if (p >= thr) return [rank, c];
-  }
+  for (const [rank, thr, c] of RANKS) if (p >= thr) return [rank, c];
   return ["Below A", BELOW_A_CONST];
 }
 function clampPercent(p) {
@@ -112,25 +182,31 @@ function percentFromDesiredRating(diff, desired) {
 
 /* ---- UI ---- */
 const $ = (id) => document.getElementById(id);
-const difficultySel = $("difficulty");
+const themeSel = $("theme");
+const diffSel = $("difficulty");
 const percentIn = $("percent");
 const desiredIn = $("desired");
 const calcBtn = $("calc");
-const out = $("out");
 const err = $("err");
+const primaryK = $("primaryK"), primaryV = $("primaryV"), primarySub = $("primarySub");
+const secondaryCard = $("secondaryCard"), secondaryK = $("secondaryK"), secondaryV = $("secondaryV"), secondarySub = $("secondarySub");
+const maxLine = $("maxLine");
 
-percentIn.addEventListener("input", () => {
-  if (percentIn.value !== "") desiredIn.value = "";
-});
-desiredIn.addEventListener("input", () => {
-  if (desiredIn.value !== "") percentIn.value = "";
-});
+function setTheme(name){ document.body.setAttribute("data-theme", name); }
+themeSel.addEventListener("change", e => setTheme(e.target.value));
+
+percentIn.addEventListener("input", () => { if (percentIn.value !== "") desiredIn.value = ""; });
+desiredIn.addEventListener("input", () => { if (desiredIn.value !== "") percentIn.value = ""; });
 
 calcBtn.addEventListener("click", () => {
   err.style.display = "none";
-  out.textContent = "—";
+  secondaryCard.style.display = "none";
+  primaryV.textContent = "—";
+  primarySub.textContent = "";
+  secondarySub.textContent = "";
+  maxLine.textContent = "";
 
-  const diffName = difficultySel.value;
+  const diffName = diffSel.value;
   const diff = DIFFICULTIES[diffName];
 
   const pStr = percentIn.value.trim();
@@ -139,54 +215,52 @@ calcBtn.addEventListener("click", () => {
   const usingDesired = rStr !== "";
 
   if (usingPercent === usingDesired) {
-    err.textContent = "Specify exactly one: Accuracy % or Desired rating.";
+    err.textContent = "Enter exactly one value.";
     err.style.display = "block";
     return;
   }
 
   if (usingPercent) {
-    let p = Number(pStr);
-    if (!isFinite(p) || p < 0 || p > MAX_INPUT) {
+    const raw = Number(pStr);
+    if (!isFinite(raw) || raw < 0 || raw > MAX_INPUT) {
       err.textContent = `Accuracy must be between 0 and ${MAX_INPUT}.`;
       err.style.display = "block";
       return;
     }
-    const { rating, rank, c, pUsed } = ratingFromPercent(diff, p);
-    const maxR = maxRatingForDifficulty(diff);
-    out.textContent =
-`Difficulty: ${diffName} (${diff})
-Rank: ${rank} (constant ${c})
-Accuracy: ${pUsed.toFixed(4)}%
-Rating: ${rating.toFixed(2)}
-Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxR.toFixed(2)}`;
+    const { rating } = ratingFromPercent(diff, raw);
+    primaryK.textContent = "Rating";
+    primaryV.textContent = rating.toFixed(2);
+    primarySub.textContent = `${diffName} • accuracy capped at ${MAX_ACHIEVABLE.toFixed(4)}% for rating math`;
+    maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRatingForDifficulty(diff).toFixed(2)}`;
     return;
   }
 
   if (usingDesired) {
-    let desired = Number(rStr);
+    const desired = Number(rStr);
     if (!isFinite(desired) || desired < 0) {
       err.textContent = "Desired rating must be a nonnegative number.";
       err.style.display = "block";
       return;
     }
     const res = percentFromDesiredRating(diff, desired);
+    primaryK.textContent = "Required Accuracy";
     if (res.impossible) {
-      out.textContent =
-`Difficulty: ${diffName} (${diff})
-Desired Rating: ${desired.toFixed(2)}
-Impossible. Max rating ${res.maxR.toFixed(2)} at ${MAX_ACHIEVABLE.toFixed(4)}%.`;
+      primaryV.textContent = "Impossible";
+      primarySub.textContent = `Max rating ${res.maxR.toFixed(2)} at ${MAX_ACHIEVABLE.toFixed(4)}% (${diffName})`;
       return;
     }
-    const rating = diff * res.mn;
-    out.textContent =
-`Difficulty: ${diffName} (${diff})
-Desired Rating: ${desired.toFixed(2)}
-Required Rank: ${res.rank} (constant ${res.c})
-Required Accuracy: ${res.required.toFixed(4)}%
-Rating Achieved: ${rating.toFixed(2)}
-Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRatingForDifficulty(diff).toFixed(2)}`;
+    primaryV.textContent = `${res.required.toFixed(4)}%`;
+    primarySub.textContent = `${diffName}`;
+    secondaryCard.style.display = "block";
+    secondaryK.textContent = "Required Rank";
+    secondaryV.textContent = `${res.rank}`;
+    secondarySub.textContent = `constant ${res.c}`;
+    maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRatingForDifficulty(diff).toFixed(2)}`;
   }
 });
+
+// initial theme
+setTheme(themeSel.value);
 </script>
 </body>
 </html>

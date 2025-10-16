@@ -61,6 +61,17 @@
     .cards { grid-template-columns: 1fr }
     .row { grid-template-columns: 1fr }
   }
+  .error {
+    color:#ffb4c1;
+    font-weight:600;
+    font-size:12px;     /* smaller warning text */
+    margin-top:4px;
+    }
+    input:disabled {
+    opacity:0.4;
+    pointer-events:none;
+    }
+
 </style>
 </head>
 <body data-theme="ocean">
@@ -197,6 +208,27 @@ themeSel.addEventListener("change", e => setTheme(e.target.value));
 
 percentIn.addEventListener("input", () => { if (percentIn.value !== "") desiredIn.value = ""; });
 desiredIn.addEventListener("input", () => { if (desiredIn.value !== "") percentIn.value = ""; });
+
+function toggleInputs() {
+  const pHas = percentIn.value.trim() !== "";
+  const dHas = desiredIn.value.trim() !== "";
+
+  if (pHas) {
+    desiredIn.disabled = true;
+  } else {
+    desiredIn.disabled = false;
+  }
+
+  if (dHas) {
+    percentIn.disabled = true;
+  } else {
+    percentIn.disabled = false;
+  }
+}
+
+percentIn.addEventListener("input", toggleInputs);
+desiredIn.addEventListener("input", toggleInputs);
+
 
 calcBtn.addEventListener("click", () => {
   err.style.display = "none";

@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Latent Kingdom Calculator</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; max-width: 720px }
+  h1 { font-size: 1.25rem; margin: 0 0 12px }
+  .card { border: 1px solid #ddd; border-radius: 10px; padding: 16px; margin: 12px 0 }
+  label { display: block; font-weight: 600; margin-top: 8px }
+  input, select, button { padding: 8px; font-size: 1rem; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px }
+  .muted { color: #555 }
+  .error { color: #b00020; font-weight: 600; }
+  .out pre { background: #fafafa; border: 1px solid #eee; padding: 12px; border-radius: 8px; white-space: pre-wrap }
+</style>
+</head>
+<body>
+  <h1>Latent Kingdom Calculator</h1>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label for="difficulty">Difficulty</label>
+        <select id="difficulty">
+          <option value="MASTER">MASTER (14.9)</option>
+          <option value="EXPERT">EXPERT (12.8)</option>
+        </select>
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button id="calc">Calculate</button>
+      </div>
+    </div>
+
+    <label for="percent">Accuracy % (0–101). Leave blank if using desired rating.</label>
+    <input id="percent" type="number" step="0.0001" min="0" max="101" placeholder="e.g., 98.7654" />
+
+    <label for="desired">Desired rating. Leave blank if using accuracy %.</label>
+    <input id="desired" type="number" step="0.01" min="0" placeholder="e.g., 300.00" />
+
+    <p class="muted">Use exactly one input: either Accuracy % or Desired rating.</p>
+    <p id="err" class="error" role="alert" style="display:none"></p>
+  </div>
+
+  <div class="card out">
+    <strong>Result</strong>
+    <pre id="out" aria-live="polite">—</pre>
+  </div>
+
+<script>
+/* ---- Constants ---- */
+const DIFFICULTIES = { EXPERT: 12.8, MASTER: 14.9 };
+const RANKS = [
+  ["SSS+", 100.5, 22.4],
+  ["SSS", 100.0, 21.6],
+  ["SS+",  99.5, 21.1],
+  ["SS",   99.0, 20.8],
+  ["S+",   98.0, 20.3],
+  ["S",    97.0, 20.0],
+  ["AAA",  94.0, 16.8],
+  ["AA",   90.0, 15.2],
+  ["A",    80.0, 13.6],
+];
+const MAX_INPUT = 101.0;       // UI cap
+const MAX_ACHIEVABLE = 100.5;  // rating cap
+const PRECISION = 1e-5;
+const BELOW_A_CONST = 0.0;
+
+/* ---- Core math ---- */
+function findRankByPercent(p) {
+  for (const [rank, thr, c] of RANKS) {
+    if (p >= thr) return [rank, c];
+  }
+  return ["Below A", BELOW_A_CONST];
+}
+function clampPercent(p) {
+  if (!isFinite(p)) return 0;
+  return Math.max(0, Math.min(p, MAX_ACHIEVABLE));
+}
+function magicNumber(percent) {
+  const p = clampPercent(percent);
+  const [, c] = findRankByPercent(p);
+  return (p / 100) * c;
+}
+function maxRatingForDifficulty(diff) {
+  return diff * magicNumber(MAX_ACHIEVABLE);
+}
+function ratingFromPercent(diff, percent) {
+  const p = clampPercent(percent);
+  const mn = magicNumber(p);
+  const rating = diff * mn;
+  const [rank, c] = findRankByPercent(p);
+  return { rating, rank, c, pUsed: p, mn };
+}
+function percentFromDesiredRating(diff, desired) {
+  const maxR = maxRatingForDifficulty(diff);
+  if (desired > maxR + 1e-9) return { impossible: true, maxR };
+
+  const targetMN = desired / diff;
+  let low = 0, high = MAX_ACHIEVABLE;
+  while (high - low > PRECISION) {
+    const mid = (low + high) / 2;
+    if (magicNumber(mid) < targetMN) low = mid; else high = mid;
+  }
+  const required = Math.round(high * 10000) / 10000;
+  const [rank, c] = findRankByPercent(required);
+  const mn = magicNumber(required);
+  return { impossible: false, required, rank, c, mn };
+}
+
+/* ---- UI ---- */
+const $ = (id) => document.getElementById(id);
+const difficultySel = $("difficulty");
+const percentIn = $("percent");
+const desiredIn = $("desired");
+const calcBtn = $("calc");
+const out = $("out");
+const err = $("err");
+
+percentIn.addEventListener("input", () => {
+  if (percentIn.value !== "") desiredIn.value = "";
+});
+desiredIn.addEventListener("input", () => {
+  if (desiredIn.value !== "") percentIn.value = "";
+});
+
+calcBtn.addEventListener("click", () => {
+  err.style.display = "none";
+  out.textContent = "—";
+
+  const diffName = difficultySel.value;
+  const diff = DIFFICULTIES[diffName];
+
+  const pStr = percentIn.value.trim();
+  const rStr = desiredIn.value.trim();
+  const usingPercent = pStr !== "";
+  const usingDesired = rStr !== "";
+
+  if (usingPercent === usingDesired) {
+    err.textContent = "Specify exactly one: Accuracy % or Desired rating.";
+    err.style.display = "block";
+    return;
+  }
+
+  if (usingPercent) {
+    let p = Number(pStr);
+    if (!isFinite(p) || p < 0 || p > MAX_INPUT) {
+      err.textContent = `Accuracy must be between 0 and ${MAX_INPUT}.`;
+      err.style.display = "block";
+      return;
+    }
+    const { rating, rank, c, pUsed } = ratingFromPercent(diff, p);
+    const maxR = maxRatingForDifficulty(diff);
+    out.textContent =
+`Difficulty: ${diffName} (${diff})
+Rank: ${rank} (constant ${c})
+Accuracy: ${pUsed.toFixed(4)}%
+Rating: ${rating.toFixed(2)}
+Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxR.toFixed(2)}`;
+    return;
+  }
+
+  if (usingDesired) {
+    let desired = Number(rStr);
+    if (!isFinite(desired) || desired < 0) {
+      err.textContent = "Desired rating must be a nonnegative number.";
+      err.style.display = "block";
+      return;
+    }
+    const res = percentFromDesiredRating(diff, desired);
+    if (res.impossible) {
+      out.textContent =
+`Difficulty: ${diffName} (${diff})
+Desired Rating: ${desired.toFixed(2)}
+Impossible. Max rating ${res.maxR.toFixed(2)} at ${MAX_ACHIEVABLE.toFixed(4)}%.`;
+      return;
+    }
+    const rating = diff * res.mn;
+    out.textContent =
+`Difficulty: ${diffName} (${diff})
+Desired Rating: ${desired.toFixed(2)}
+Required Rank: ${res.rank} (constant ${res.c})
+Required Accuracy: ${res.required.toFixed(4)}%
+Rating Achieved: ${rating.toFixed(2)}
+Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRatingForDifficulty(diff).toFixed(2)}`;
+  }
+});
+</script>
+</body>
+</html>

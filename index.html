@@ -64,7 +64,7 @@
   .error {
     color:#ffb4c1;
     font-weight:600;
-    font-size:12px;     /* smaller warning text */
+    font-size:12px;
     margin-top:4px;
     }
     input:disabled {
@@ -133,7 +133,6 @@
   </div>
 
 <script>
-/* ---- Constants ---- */
 const DIFFICULTIES = { EXPERT: 12.8, MASTER: 14.9 };
 const RANKS = [
   ["SSS+", 100.5, 22.4],
@@ -151,8 +150,7 @@ const MAX_ACHIEVABLE = 100.5;
 const PRECISION = 1e-5;
 const BELOW_A_CONST = 0.0;
 
-/* ---- Math ---- */
-function findRankByPercent(p) {
+function findRank(p) {
   for (const [rank, thr, c] of RANKS) if (p >= thr) return [rank, c];
   return ["Below A", BELOW_A_CONST];
 }
@@ -160,38 +158,37 @@ function clampPercent(p) {
   if (!isFinite(p)) return 0;
   return Math.max(0, Math.min(p, MAX_ACHIEVABLE));
 }
-function magicNumber(percent) {
+function scoreConst(percent) {
   const p = clampPercent(percent);
-  const [, c] = findRankByPercent(p);
+  const [, c] = findRank(p);
   return (p / 100) * c;
 }
-function maxRatingForDifficulty(diff) {
-  return diff * magicNumber(MAX_ACHIEVABLE);
+function maxRating(diff) {
+  return diff * scoreConst(MAX_ACHIEVABLE);
 }
-function ratingFromPercent(diff, percent) {
+function getRating(diff, percent) {
   const p = clampPercent(percent);
-  const mn = magicNumber(p);
+  const mn = scoreConst(p);
   const rating = diff * mn;
-  const [rank, c] = findRankByPercent(p);
+  const [rank, c] = findRank(p);
   return { rating, rank, c, pUsed: p, mn };
 }
-function percentFromDesiredRating(diff, desired) {
-  const maxR = maxRatingForDifficulty(diff);
+function getPercent(diff, desired) {
+  const maxR = maxRating(diff);
   if (desired > maxR + 1e-9) return { impossible: true, maxR };
 
   const targetMN = desired / diff;
   let low = 0, high = MAX_ACHIEVABLE;
   while (high - low > PRECISION) {
     const mid = (low + high) / 2;
-    if (magicNumber(mid) < targetMN) low = mid; else high = mid;
+    if (scoreConst(mid) < targetMN) low = mid; else high = mid;
   }
   const required = Math.round(high * 10000) / 10000;
-  const [rank, c] = findRankByPercent(required);
-  const mn = magicNumber(required);
+  const [rank, c] = findRank(required);
+  const mn = scoreConst(required);
   return { impossible: false, required, rank, c, mn };
 }
 
-/* ---- UI ---- */
 const $ = (id) => document.getElementById(id);
 const themeSel = $("theme");
 const diffSel = $("difficulty");
@@ -259,11 +256,11 @@ calcBtn.addEventListener("click", () => {
       err.style.display = "block";
       return;
     }
-    const { rating } = ratingFromPercent(diff, raw);
+    const { rating } = getRating(diff, raw);
     primaryK.textContent = "Rating";
     primaryV.textContent = rating.toFixed(2);
     primarySub.textContent = `${diffName} • accuracy capped at ${MAX_ACHIEVABLE.toFixed(4)}%`;
-    maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRatingForDifficulty(diff).toFixed(2)}`;
+    maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRating(diff).toFixed(2)}`;
     return;
   }
 
@@ -274,7 +271,7 @@ calcBtn.addEventListener("click", () => {
       err.style.display = "block";
       return;
     }
-    const res = percentFromDesiredRating(diff, desired);
+    const res = getPercent(diff, desired);
     primaryK.textContent = "Required Accuracy";
     if (res.impossible) {
       primaryV.textContent = "Impossible";
@@ -287,7 +284,7 @@ calcBtn.addEventListener("click", () => {
     secondaryK.textContent = "Required Rank";
     secondaryV.textContent = `${res.rank}`;
     secondarySub.textContent = `constant ${res.c}`;
-    maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRatingForDifficulty(diff).toFixed(2)}`;
+    maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRating(diff).toFixed(2)}`;
   }
 });
 

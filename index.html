@@ -262,7 +262,7 @@ calcBtn.addEventListener("click", () => {
     const { rating } = ratingFromPercent(diff, raw);
     primaryK.textContent = "Rating";
     primaryV.textContent = rating.toFixed(2);
-    primarySub.textContent = `${diffName} • accuracy capped at ${MAX_ACHIEVABLE.toFixed(4)}% for rating math`;
+    primarySub.textContent = `${diffName} • accuracy capped at ${MAX_ACHIEVABLE.toFixed(4)}%`;
     maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRatingForDifficulty(diff).toFixed(2)}`;
     return;
   }

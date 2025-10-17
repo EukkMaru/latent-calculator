@@ -1,295 +1,461 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>fuck you *latents your kingdom*</title>
-<style>
-  :root {
-    --bg: #0f1220; --fg: #e9eef6; --muted:#aab3c2; --card:#171a2b; --border:#2a3050; --accent:#8dd6ff;
-    --grad1:#6e8efb; --grad2:#a777e3;
-  }
-  [data-theme="ocean"] {
-    --bg:#081b29; --fg:#e7f6ff; --muted:#9ec9de; --card:#0f2a3b; --border:#14465e; --accent:#7fd4ff;
-    --grad1:#00c6ff; --grad2:#0072ff;
-  }
-  [data-theme="sunrise"] {
-    --bg:#1c1513; --fg:#fff3e8; --muted:#ffd3b0; --card:#2a1d19; --border:#3a2a24; --accent:#ffcf6f;
-    --grad1:#ff9966; --grad2:#ff5e62;
-  }
-  [data-theme="matcha"] {
-    --bg:#0f1a14; --fg:#e9fff1; --muted:#b6e3c8; --card:#13221a; --border:#1f3a2d; --accent:#a8f5c9;
-    --grad1:#56ab2f; --grad2:#a8e063;
-  }
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>fuck you *latents your kingdom*</title>
+    <style>
+        :root {
+            --bg: #0f1220;
+            --fg: #e9eef6;
+            --muted: #aab3c2;
+            --card: #171a2b;
+            --border: #2a3050;
+            --accent: #8dd6ff;
+            --grad1: #6e8efb;
+            --grad2: #a777e3;
+        }
 
-  html,body { height:100% }
-  body {
-    margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    color:var(--fg); background:linear-gradient(135deg,var(--grad1),var(--grad2)) fixed;
-    display:flex; align-items:center; justify-content:center; padding:24px;
-  }
-  .shell {
-    backdrop-filter: blur(8px);
-    background: color-mix(in oklab, var(--card) 85%, transparent);
-    border:1px solid var(--border); border-radius:18px; max-width:760px; width:100%;
-    box-shadow: 0 10px 30px color-mix(in oklab, black 60%, transparent);
-  }
-  .bar { display:flex; gap:12px; padding:16px 18px; border-bottom:1px solid var(--border); align-items:center; flex-wrap:wrap }
-  .title { font-weight:700; font-size:18px; letter-spacing:.2px }
-  .spacer { flex:1 }
-  select, input, button {
-    background:var(--bg); color:var(--fg); border:1px solid var(--border); border-radius:12px; padding:10px 12px; font-size:14px;
-  }
-  button { background:var(--accent); color:#001018; border:none; font-weight:700; cursor:pointer }
-  button:active { transform: translateY(1px) }
+        [data-theme="ocean"] {
+            --bg: #081b29;
+            --fg: #e7f6ff;
+            --muted: #9ec9de;
+            --card: #0f2a3b;
+            --border: #14465e;
+            --accent: #7fd4ff;
+            --grad1: #00c6ff;
+            --grad2: #0072ff;
+        }
 
-  .grid { display:grid; gap:14px; grid-template-columns: 1fr; padding:16px }
-  .row { display:grid; gap:12px; grid-template-columns: 1fr 1fr }
-  .muted { color:var(--muted); font-size:13px }
-  .error { color:#ffb4c1; font-weight:700; }
+        [data-theme="sunrise"] {
+            --bg: #1c1513;
+            --fg: #fff3e8;
+            --muted: #ffd3b0;
+            --card: #2a1d19;
+            --border: #3a2a24;
+            --accent: #ffcf6f;
+            --grad1: #ff9966;
+            --grad2: #ff5e62;
+        }
 
-  .cards { display:grid; gap:14px; grid-template-columns: 1fr 1fr }
-  .card {
-    background: color-mix(in oklab, var(--bg) 75%, transparent);
-    border:1px solid var(--border); border-radius:14px; padding:16px; min-height:110px;
-  }
-  .k { font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted) }
-  .v { font-size:34px; font-weight:800; line-height:1.1; word-break:break-word }
-  .sub { font-size:13px; color:var(--muted); margin-top:6px }
+        [data-theme="matcha"] {
+            --bg: #0f1a14;
+            --fg: #e9fff1;
+            --muted: #b6e3c8;
+            --card: #13221a;
+            --border: #1f3a2d;
+            --accent: #a8f5c9;
+            --grad1: #56ab2f;
+            --grad2: #a8e063;
+        }
 
-  @media (max-width:720px){
-    .cards { grid-template-columns: 1fr }
-    .row { grid-template-columns: 1fr }
-  }
-  .error {
-    color:#ffb4c1;
-    font-weight:600;
-    font-size:12px;
-    margin-top:4px;
-    }
-    input:disabled {
-    opacity:0.4;
-    pointer-events:none;
-    }
+        html,
+        body {
+            height: 100%
+        }
 
-</style>
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            color: var(--fg);
+            background: linear-gradient(135deg, var(--grad1), var(--grad2)) fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .shell {
+            backdrop-filter: blur(8px);
+            background: color-mix(in oklab, var(--card) 85%, transparent);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            max-width: 760px;
+            width: 100%;
+            box-shadow: 0 10px 30px color-mix(in oklab, black 60%, transparent);
+        }
+
+        .bar {
+            display: flex;
+            gap: 12px;
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+            flex-wrap: wrap
+        }
+
+        .title {
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: .2px
+        }
+
+        .spacer {
+            flex: 1
+        }
+
+        select,
+        input,
+        button {
+            background: var(--bg);
+            color: var(--fg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        button {
+            background: var(--accent);
+            color: #001018;
+            border: none;
+            font-weight: 700;
+            cursor: pointer
+        }
+
+        button:active {
+            transform: translateY(1px)
+        }
+
+        .grid {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: 1fr;
+            padding: 16px
+        }
+
+        .row {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: 1fr 1fr
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .error {
+            color: #ffb4c1;
+            font-weight: 700;
+        }
+
+        .cards {
+            display: grid;
+            gap: 14px;
+            grid-template-columns: 1fr 1fr
+        }
+
+        .card {
+            background: color-mix(in oklab, var(--bg) 75%, transparent);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            min-height: 110px;
+        }
+
+        .k {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: var(--muted)
+        }
+
+        .v {
+            font-size: 34px;
+            font-weight: 800;
+            line-height: 1.1;
+            word-break: break-word
+        }
+
+        .sub {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 6px
+        }
+
+        @media(max-width: 720px){
+            .cards {
+              grid-template-columns: 1fr
+            }
+
+            .row {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .error {
+            color: #ffb4c1;
+            font-weight: 600;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        input:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+    </style>
 </head>
+
 <body data-theme="ocean">
-  <div class="shell">
-    <div class="bar">
-      <div class="title">Latent Kingdom Calculator</div>
-      <div class="spacer"></div>
-      <select id="theme">
-        <option value="ocean">Ocean</option>
-        <option value="sunrise">Sunrise</option>
-        <option value="matcha">Matcha</option>
-      </select>
+    <div class="shell">
+        <div class="bar">
+            <div class="title">Latent Kingdom Calculator</div>
+            <div class="spacer"></div>
+            <select id="theme">
+                <option value="ocean">Ocean</option>
+                <option value="sunrise">Sunrise</option>
+                <option value="matcha">Matcha</option>
+            </select>
+        </div>
+
+        <div class="grid">
+            <div class="row">
+                <label>
+                    <span class="k">Difficulty</span><br />
+                    <select id="difficulty">
+                        <option value="MASTER">MASTER (14.9)</option>
+                        <option value="EXPERT">EXPERT (12.8)</option>
+                    </select>
+                </label>
+                <div></div>
+            </div>
+
+            <label>
+                <span class="k">Accuracy % (0–101)</span>
+                <input id="percent" type="number" step="0.0001" min="0" max="101" placeholder="e.g., 98.7654" />
+            </label>
+
+            <label>
+                <span class="k">Desired rating</span>
+                <input id="desired" type="number" step="0.01" min="0" placeholder="e.g., 300.00" />
+            </label>
+
+            <div class="row">
+                <div class="muted">Enter exactly one value. If accuracy is set you will get only the rating. If desired rating
+                    is set you will get only required accuracy and rank.</div>
+                <div style="text-align:right"><button id="calc">Calculate</button></div>
+            </div>
+
+            <div id="err" class="error" style="display:none"></div>
+
+            <div class="cards">
+                <div class="card" id="primaryCard">
+                    <div class="k" id="primaryK">Result</div>
+                    <div class="v" id="primaryV">—</div>
+                    <div class="sub" id="primarySub"></div>
+                </div>
+                <div class="card" id="secondaryCard" style="display:none">
+                    <div class="k" id="secondaryK"></div>
+                    <div class="v" id="secondaryV"></div>
+                    <div class="sub" id="secondarySub"></div>
+                </div>
+            </div>
+
+            <div class="muted" id="maxLine"></div>
+        </div>
     </div>
 
-    <div class="grid">
-      <div class="row">
-        <label>
-          <span class="k">Difficulty</span><br/>
-          <select id="difficulty">
-            <option value="MASTER">MASTER (14.9)</option>
-            <option value="EXPERT">EXPERT (12.8)</option>
-          </select>
-        </label>
-        <div></div>
-      </div>
+    <script>
+        const DIFFICULTIES = {
+            EXPERT: 12.8,
+            MASTER: 14.9
+        };
+        const RANKS = [
+            ["SSS+", 100.5, 22.4],
+            ["SSS", 100.0, 21.6],
+            ["SS+", 99.5, 21.1],
+            ["SS", 99.0, 20.8],
+            ["S+", 98.0, 20.3],
+            ["S", 97.0, 20.0],
+            ["AAA", 94.0, 16.8],
+            ["AA", 90.0, 15.2],
+            ["A", 80.0, 13.6],
+        ];
+        const MAX_INPUT = 101.0;
+        const MAX_ACHIEVABLE = 100.5;
+        const PRECISION = 1e-5;
+        const BELOW_A_CONST = 0.0;
 
-      <label>
-        <span class="k">Accuracy % (0–101)</span>
-        <input id="percent" type="number" step="0.0001" min="0" max="101" placeholder="e.g., 98.7654" />
-      </label>
+        function findRank(p) {
+            for (const [rank, thr, c] of RANKS)
+                if (p >= thr) return [rank, c];
+            return ["Below A", BELOW_A_CONST];
+        }
 
-      <label>
-        <span class="k">Desired rating</span>
-        <input id="desired" type="number" step="0.01" min="0" placeholder="e.g., 300.00" />
-      </label>
+        function clampPercent(p) {
+            if (!isFinite(p)) return 0;
+            return Math.max(0, Math.min(p, MAX_ACHIEVABLE));
+        }
 
-      <div class="row">
-        <div class="muted">Enter exactly one value. If accuracy is set you will get only the rating. If desired rating is set you will get only required accuracy and rank.</div>
-        <div style="text-align:right"><button id="calc">Calculate</button></div>
-      </div>
+        function scoreConst(percent) {
+            const p = clampPercent(percent);
+            const [, c] = findRank(p);
+            return (p / 100) * c;
+        }
 
-      <div id="err" class="error" style="display:none"></div>
+        function maxRating(diff) {
+            return diff * scoreConst(MAX_ACHIEVABLE);
+        }
 
-      <div class="cards">
-        <div class="card" id="primaryCard">
-          <div class="k" id="primaryK">Result</div>
-          <div class="v" id="primaryV">—</div>
-          <div class="sub" id="primarySub"></div>
-        </div>
-        <div class="card" id="secondaryCard" style="display:none">
-          <div class="k" id="secondaryK"></div>
-          <div class="v" id="secondaryV"></div>
-          <div class="sub" id="secondarySub"></div>
-        </div>
-      </div>
+        function getRating(diff, percent) {
+            const p = clampPercent(percent);
+            const mn = scoreConst(p);
+            const rating = diff * mn;
+            const [rank, c] = findRank(p);
+            return {
+                rating,
+                rank,
+                c,
+                pUsed: p,
+                mn
+            };
+        }
 
-      <div class="muted" id="maxLine"></div>
-    </div>
-  </div>
+        function getPercent(diff, desired) {
+            const maxR = maxRating(diff);
+            if (desired > maxR + 1e-9) return {
+                impossible: true,
+                maxR
+            };
 
-<script>
-const DIFFICULTIES = { EXPERT: 12.8, MASTER: 14.9 };
-const RANKS = [
-  ["SSS+", 100.5, 22.4],
-  ["SSS", 100.0, 21.6],
-  ["SS+",  99.5, 21.1],
-  ["SS",   99.0, 20.8],
-  ["S+",   98.0, 20.3],
-  ["S",    97.0, 20.0],
-  ["AAA",  94.0, 16.8],
-  ["AA",   90.0, 15.2],
-  ["A",    80.0, 13.6],
-];
-const MAX_INPUT = 101.0;
-const MAX_ACHIEVABLE = 100.5;
-const PRECISION = 1e-5;
-const BELOW_A_CONST = 0.0;
+            const targetMN = desired / diff;
+            let low = 0,
+                high = MAX_ACHIEVABLE;
+            while (high - low > PRECISION) {
+                const mid = (low + high) / 2;
+                if (scoreConst(mid) < targetMN) low = mid;
+                else high = mid;
+            }
+            const required = Math.round(high * 10000) / 10000;
+            const [rank, c] = findRank(required);
+            const mn = scoreConst(required);
+            return {
+                impossible: false,
+                required,
+                rank,
+                c,
+                mn
+            };
+        }
 
-function findRank(p) {
-  for (const [rank, thr, c] of RANKS) if (p >= thr) return [rank, c];
-  return ["Below A", BELOW_A_CONST];
-}
-function clampPercent(p) {
-  if (!isFinite(p)) return 0;
-  return Math.max(0, Math.min(p, MAX_ACHIEVABLE));
-}
-function scoreConst(percent) {
-  const p = clampPercent(percent);
-  const [, c] = findRank(p);
-  return (p / 100) * c;
-}
-function maxRating(diff) {
-  return diff * scoreConst(MAX_ACHIEVABLE);
-}
-function getRating(diff, percent) {
-  const p = clampPercent(percent);
-  const mn = scoreConst(p);
-  const rating = diff * mn;
-  const [rank, c] = findRank(p);
-  return { rating, rank, c, pUsed: p, mn };
-}
-function getPercent(diff, desired) {
-  const maxR = maxRating(diff);
-  if (desired > maxR + 1e-9) return { impossible: true, maxR };
+        const $ = (id) => document.getElementById(id);
+        const themeSel = $("theme");
+        const diffSel = $("difficulty");
+        const percentIn = $("percent");
+        const desiredIn = $("desired");
+        const calcBtn = $("calc");
+        const err = $("err");
+        const primaryK = $("primaryK"),
+            primaryV = $("primaryV"),
+            primarySub = $("primarySub");
+        const secondaryCard = $("secondaryCard"),
+            secondaryK = $("secondaryK"),
+            secondaryV = $("secondaryV"),
+            secondarySub = $("secondarySub");
+        const maxLine = $("maxLine");
 
-  const targetMN = desired / diff;
-  let low = 0, high = MAX_ACHIEVABLE;
-  while (high - low > PRECISION) {
-    const mid = (low + high) / 2;
-    if (scoreConst(mid) < targetMN) low = mid; else high = mid;
-  }
-  const required = Math.round(high * 10000) / 10000;
-  const [rank, c] = findRank(required);
-  const mn = scoreConst(required);
-  return { impossible: false, required, rank, c, mn };
-}
+        function setTheme(name) {
+            document.body.setAttribute("data-theme", name);
+        }
+        themeSel.addEventListener("change", e => setTheme(e.target.value));
 
-const $ = (id) => document.getElementById(id);
-const themeSel = $("theme");
-const diffSel = $("difficulty");
-const percentIn = $("percent");
-const desiredIn = $("desired");
-const calcBtn = $("calc");
-const err = $("err");
-const primaryK = $("primaryK"), primaryV = $("primaryV"), primarySub = $("primarySub");
-const secondaryCard = $("secondaryCard"), secondaryK = $("secondaryK"), secondaryV = $("secondaryV"), secondarySub = $("secondarySub");
-const maxLine = $("maxLine");
+        percentIn.addEventListener("input", () => {
+            if (percentIn.value !== "") desiredIn.value = "";
+        });
+        desiredIn.addEventListener("input", () => {
+            if (desiredIn.value !== "") percentIn.value = "";
+        });
 
-function setTheme(name){ document.body.setAttribute("data-theme", name); }
-themeSel.addEventListener("change", e => setTheme(e.target.value));
+        function toggleInputs() {
+            const pHas = percentIn.value.trim() !== "";
+            const dHas = desiredIn.value.trim() !== "";
 
-percentIn.addEventListener("input", () => { if (percentIn.value !== "") desiredIn.value = ""; });
-desiredIn.addEventListener("input", () => { if (desiredIn.value !== "") percentIn.value = ""; });
+            if (pHas) {
+                desiredIn.disabled = true;
+            } else {
+                desiredIn.disabled = false;
+            }
 
-function toggleInputs() {
-  const pHas = percentIn.value.trim() !== "";
-  const dHas = desiredIn.value.trim() !== "";
+            if (dHas) {
+                percentIn.disabled = true;
+            } else {
+                percentIn.disabled = false;
+            }
+        }
 
-  if (pHas) {
-    desiredIn.disabled = true;
-  } else {
-    desiredIn.disabled = false;
-  }
-
-  if (dHas) {
-    percentIn.disabled = true;
-  } else {
-    percentIn.disabled = false;
-  }
-}
-
-percentIn.addEventListener("input", toggleInputs);
-desiredIn.addEventListener("input", toggleInputs);
+        percentIn.addEventListener("input", toggleInputs);
+        desiredIn.addEventListener("input", toggleInputs);
 
 
-calcBtn.addEventListener("click", () => {
-  err.style.display = "none";
-  secondaryCard.style.display = "none";
-  primaryV.textContent = "—";
-  primarySub.textContent = "";
-  secondarySub.textContent = "";
-  maxLine.textContent = "";
+        calcBtn.addEventListener("click", () => {
+            err.style.display = "none";
+            secondaryCard.style.display = "none";
+            primaryV.textContent = "—";
+            primarySub.textContent = "";
+            secondarySub.textContent = "";
+            maxLine.textContent = "";
 
-  const diffName = diffSel.value;
-  const diff = DIFFICULTIES[diffName];
+            const diffName = diffSel.value;
+            const diff = DIFFICULTIES[diffName];
 
-  const pStr = percentIn.value.trim();
-  const rStr = desiredIn.value.trim();
-  const usingPercent = pStr !== "";
-  const usingDesired = rStr !== "";
+            const pStr = percentIn.value.trim();
+            const rStr = desiredIn.value.trim();
+            const usingPercent = pStr !== "";
+            const usingDesired = rStr !== "";
 
-  if (usingPercent === usingDesired) {
-    err.textContent = "Enter exactly one value.";
-    err.style.display = "block";
-    return;
-  }
+            if (usingPercent === usingDesired) {
+                err.textContent = "Enter exactly one value.";
+                err.style.display = "block";
+                return;
+            }
 
-  if (usingPercent) {
-    const raw = Number(pStr);
-    if (!isFinite(raw) || raw < 0 || raw > MAX_INPUT) {
-      err.textContent = `Accuracy must be between 0 and ${MAX_INPUT}.`;
-      err.style.display = "block";
-      return;
-    }
-    const { rating } = getRating(diff, raw);
-    primaryK.textContent = "Rating";
-    primaryV.textContent = rating.toFixed(2);
-    primarySub.textContent = `${diffName} • accuracy capped at ${MAX_ACHIEVABLE.toFixed(4)}%`;
-    maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRating(diff).toFixed(2)}`;
-    return;
-  }
+            if (usingPercent) {
+                const raw = Number(pStr);
+                if (!isFinite(raw) || raw < 0 || raw > MAX_INPUT) {
+                    err.textContent = `Accuracy must be between 0 and ${MAX_INPUT}.`;
+                    err.style.display = "block";
+                    return;
+                }
+                const {
+                    rating
+                } = getRating(diff, raw);
+                primaryK.textContent = "Rating";
+                primaryV.textContent = rating.toFixed(2);
+                primarySub.textContent = `${diffName} • accuracy capped at ${MAX_ACHIEVABLE.toFixed(4)}%`;
+                maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRating(diff).toFixed(2)}`;
+                return;
+            }
 
-  if (usingDesired) {
-    const desired = Number(rStr);
-    if (!isFinite(desired) || desired < 0) {
-      err.textContent = "Desired rating must be a nonnegative number.";
-      err.style.display = "block";
-      return;
-    }
-    const res = getPercent(diff, desired);
-    primaryK.textContent = "Required Accuracy";
-    if (res.impossible) {
-      primaryV.textContent = "Impossible";
-      primarySub.textContent = `Max rating ${res.maxR.toFixed(2)} at ${MAX_ACHIEVABLE.toFixed(4)}% (${diffName})`;
-      return;
-    }
-    primaryV.textContent = `${res.required.toFixed(4)}%`;
-    primarySub.textContent = `${diffName}`;
-    secondaryCard.style.display = "block";
-    secondaryK.textContent = "Required Rank";
-    secondaryV.textContent = `${res.rank}`;
-    secondarySub.textContent = `constant ${res.c}`;
-    maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRating(diff).toFixed(2)}`;
-  }
-});
+            if (usingDesired) {
+                const desired = Number(rStr);
+                if (!isFinite(desired) || desired < 0) {
+                    err.textContent = "Desired rating must be a nonnegative number.";
+                    err.style.display = "block";
+                    return;
+                }
+                const res = getPercent(diff, desired);
+                primaryK.textContent = "Required Accuracy";
+                if (res.impossible) {
+                    primaryV.textContent = "Impossible";
+                    primarySub.textContent = `Max rating ${res.maxR.toFixed(2)} at ${MAX_ACHIEVABLE.toFixed(4)}% (${diffName})`;
+                    return;
+                }
+                primaryV.textContent = `${res.required.toFixed(4)}%`;
+                primarySub.textContent = `${diffName}`;
+                secondaryCard.style.display = "block";
+                secondaryK.textContent = "Required Rank";
+                secondaryV.textContent = `${res.rank}`;
+                secondarySub.textContent = `constant ${res.c}`;
+                maxLine.textContent = `Max rating at ${MAX_ACHIEVABLE.toFixed(4)}%: ${maxRating(diff).toFixed(2)}`;
+            }
+        });
 
-// initial theme
-setTheme(themeSel.value);
-</script>
+        // initial theme
+        setTheme(themeSel.value);
+    </script>
 </body>
+
 </html>
